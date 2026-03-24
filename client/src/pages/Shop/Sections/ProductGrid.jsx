@@ -1,152 +1,79 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { axios, STORAGE_URL } from "../../../api";
 
 const ProductGrid = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const search = searchParams.get("search") || "";
+    const category = searchParams.get("category") || "";
+
+    const params = {};
+    if (search) params.search = search;
+    if (category) params.category = category;
+
+    setLoading(true);
+    axios
+      .get("/products", { params })
+      .then((res) => {
+        setProducts(res.data.products.data);
+      })
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
+  }, [searchParams]);
+
+  if (loading) {
+    return (
+      <div className="untree_co-section product-section before-footer-section">
+        <div className="container">
+          <p className="text-center py-5">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="untree_co-section product-section before-footer-section">
+        <div className="container">
+          <p className="text-center py-5">No products found.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-         <div className="untree_co-section product-section before-footer-section">
+      <div className="untree_co-section product-section before-footer-section">
         <div className="container">
           <div className="row">
-            {/* <!-- Start Column 1 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-3.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Nordic Chair</h3>
-                <strong className="product-price">$50.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 1 -->
-						
-					<!-- Start Column 2 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-1.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Nordic Chair</h3>
-                <strong className="product-price">$50.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 2 -->
-
-					<!-- Start Column 3 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-2.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Kruzo Aero Chair</h3>
-                <strong className="product-price">$78.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 3 -->
-
-					<!-- Start Column 4 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-3.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Ergonomic Chair</h3>
-                <strong className="product-price">$43.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 4 -->
-
-
-					<!-- Start Column 1 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-3.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Nordic Chair</h3>
-                <strong className="product-price">$50.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 1 -->
-						
-					<!-- Start Column 2 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-1.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Nordic Chair</h3>
-                <strong className="product-price">$50.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 2 -->
-
-					<!-- Start Column 3 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-2.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Kruzo Aero Chair</h3>
-                <strong className="product-price">$78.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 3 -->
-
-					<!-- Start Column 4 --> */}
-            <div className="col-12 col-md-4 col-lg-3 mb-5">
-              <a className="product-item" href="#">
-                <img
-                  src="images/product-3.png"
-                  className="img-fluid product-thumbnail"
-                />
-                <h3 className="product-title">Ergonomic Chair</h3>
-                <strong className="product-price">$43.00</strong>
-
-                <span className="icon-cross">
-                  <img src="images/cross.svg" className="img-fluid" />
-                </span>
-              </a>
-            </div>
-            {/* <!-- End Column 4 --> */}
+            {products.map((product) => (
+              <div key={product.id} className="col-12 col-md-4 col-lg-3 mb-5">
+                <a className="product-item" href="#">
+                  <img
+                    src={`${STORAGE_URL}/${product.image}`}
+                    className="img-fluid product-thumbnail"
+                    alt={product.name}
+                    onError={(e) => {
+                      e.target.src = "/images/product-1.png";
+                    }}
+                  />
+                  <h3 className="product-title">{product.name}</h3>
+                  <strong className="product-price">${parseFloat(product.price).toFixed(2)}</strong>
+                  <span className="icon-cross">
+                    <img src="/images/cross.svg" className="img-fluid" alt="add" />
+                  </span>
+                </a>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductGrid
+export default ProductGrid;

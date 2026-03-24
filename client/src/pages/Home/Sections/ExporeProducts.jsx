@@ -17,7 +17,7 @@ function ExporeProducts() {
               velit. Aliquam vulputate velit imperdiet dolor tempor tristique.{" "}
             </p>
             <p>
-              <NavLink to="" className="btn">
+              <NavLink to="/shop" className="btn">
                 Explore
               </NavLink>
             </p>

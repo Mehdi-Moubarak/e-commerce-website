@@ -15,7 +15,8 @@ const SignUp = ({ image, title, caption }) => {
   }, [setImage, image, setTitle, title, setCaption, caption]);
 
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
   });
@@ -24,16 +25,15 @@ const SignUp = ({ image, title, caption }) => {
     setFormData((data) => ({
       ...data,
       [event.target.name]: event.target.value,
-      [event.target.email]: event.target.value,
-      [event.target.password]: event.target.value,
     }));
   }
-  //send POST request to laravel
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const data = {
-      name: formData.name,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
       email: formData.email,
       password: formData.password,
       password_confirmation: formData.password,
@@ -53,13 +53,26 @@ const SignUp = ({ image, title, caption }) => {
           <input
             type="text"
             className="form-control"
-            id="name"
-            placeholder="Full Name"
-            value={formData.name}
+            id="first_name"
+            placeholder="First Name"
+            value={formData.first_name}
             onChange={changeData}
-            name="name"
+            name="first_name"
           />
-          <label htmlFor="name">Full Name</label>
+          <label htmlFor="first_name">First Name</label>
+        </div>
+
+        <div className="form-floating">
+          <input
+            type="text"
+            className="form-control"
+            id="last_name"
+            placeholder="Last Name"
+            value={formData.last_name}
+            onChange={changeData}
+            name="last_name"
+          />
+          <label htmlFor="last_name">Last Name</label>
         </div>
 
         <div className="form-floating">

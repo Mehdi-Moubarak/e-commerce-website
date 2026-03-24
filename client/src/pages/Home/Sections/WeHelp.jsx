@@ -37,7 +37,7 @@ function WeHelp() {
               <li key="4">Donec vitae odio quis nisl dapibus malesuada</li>
             </ul>
             <p>
-              <NavLink to="#" className="btn">
+              <NavLink to="/shop" className="btn">
                 Explore
               </NavLink>
             </p>

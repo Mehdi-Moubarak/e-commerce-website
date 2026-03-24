@@ -1,6 +1,5 @@
 import React from "react";
-//import "./App.css";
-import "./AdminApp.css";
+import "./App.css";
 import AppLayout from "./layouts/AppLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
