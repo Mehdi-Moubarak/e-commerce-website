@@ -1,34 +1,30 @@
 import React from 'react';
-import { useState  , useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { axios } from '../../api';
 import CategoryCreate from './CategoryCreate.js'
 
 export default function Categorie(){
     const[category, setCategory]= useState([]);
-     
+
     useEffect( ()=>{
-        const getCategory= ()=>{
-            fetch("http://127.0.0.1:8000/api/category")
-            .then(res=>{ return res.json()})
-            .then(response=>{ 
-                console.log(response.categories)
-                setCategory(response.categories)
+        axios.get("/category")
+            .then(response => {
+                setCategory(response.data.categories);
             })
-            .catch(error=>{ console.log(error)});
-        }
-        getCategory();
+            .catch(error => { console.log(error) });
     },[]);
-  
+
     const deleteCategory = (id) => {
-        axios.delete('http://127.0.0.1:8000/api/categoryDelete/'+id).then(function(response){
+        axios.delete('/categoryDelete/'+id).then(function(response){
             console.log(response.data);
             alert("Successfully Deleted");
+            setCategory(category.filter(c => c.id !== id));
         });
     }
-   
+
 
     return(
-        
+
         <div className="container">
             <div className='row'>
                 <h1>Category Page</h1>
@@ -67,21 +63,18 @@ export default function Categorie(){
                             ))
                         }
                         </tbody>
-                        
+
                     </table>
-                    
+
                     </div>
                 </div>
             </div>
-            
+
             <div className='col-lg-5 col-md-12' style={{marginTop:'10px'}}>
             <CategoryCreate />
             </div>
         </div>
     </div>
-        
+
     )
 }
-
-
-

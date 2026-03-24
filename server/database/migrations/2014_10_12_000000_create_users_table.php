@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('role')->default('customer');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('role')->default('customer');
         });
     }
 

@@ -1,40 +1,34 @@
 import React from 'react';
-
-import { useState  , useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { axios } from '../../api';
 
 
 export default function Profile(){
-    
 
     const[user, setUser]= useState([]);
-     
+
     useEffect( ()=>{
-        const getUser= ()=>{
-            fetch("http://127.0.0.1:8000/api/users")
-            .then(res=>{ return res.json()})
-            .then(response=>{ 
-                console.log(response.user)
-                setUser(response.user)
+        axios.get("/users")
+            .then(response => {
+                setUser(response.data.user.data || response.data.user);
             })
-            .catch(error=>{ console.log(error)});
-        }
-        getUser();
+            .catch(error => { console.log(error) });
     },[]);
-  
+
     const deleteUser = (id) => {
-        axios.delete('http://127.0.0.1:8000/api/userdelete/'+id).then(function(response){
+        axios.delete('/userdelete/'+id).then(function(response){
             console.log(response.data);
             alert("Successfully Deleted");
+            setUser(user.filter(u => u.id !== id));
         });
     }
-        
+
 
 
 
         return(
             <div className="container">
-                
+
                 <div className="row">
                     <h1>Customer Profile</h1>
                 <br />
@@ -57,14 +51,13 @@ export default function Profile(){
                     </div>
                     <div>
                     <br />
-                    <table id="dtHorizontalExample" className="table table-striped table-bordered table-sm" cellspacing="0" width="100%" >
+                    <table id="dtHorizontalExample" className="table table-striped table-bordered table-sm" cellSpacing="0" width="100%" >
                         <thead>
                         <tr>
                             <th>Id</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
-                            <th>Password</th>
                             <th>Address</th>
                             <th>Phone</th>
                             <th>Role</th>
@@ -75,19 +68,18 @@ export default function Profile(){
                         <tbody>
                         {
                             user?.map((pdata, index)=>(
-                                <tr>
+                                <tr key={index}>
                                     <td>{pdata.id } </td>
                                     <td>{pdata.first_name } </td>
                                     <td>{pdata.last_name } </td>
                                     <td>{pdata.email } </td>
-                                    <td>{pdata.password }</td>
                                     <td>{pdata.address } </td>
                                     <td>{pdata.phone } </td>
                                     <td>{pdata.role } </td>
                                     <td>{pdata.created_at } </td>
                                     <td>{pdata.updated_at } </td>
                                     <td>
-                                    <button onClick={() => deleteUser(pdata.id)} className="btn btn-success">Delete</button>
+                                    <button onClick={() => deleteUser(pdata.id)} className="btn btn-danger">Delete</button>
                                     </td>
                                 </tr>
                             ))
@@ -95,12 +87,10 @@ export default function Profile(){
                         </tbody>
                     </table>
                     </div>
-                    </div> 
+                    </div>
                 </div>
                 </div>
-            </div>  
-            
-                  
+            </div>
+
     )
 }
-

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Http\Requests\CommentStoreRequest;
@@ -9,106 +10,90 @@ class CommentController extends Controller
 {
     public function index()
     {
-       // All Comment
-       $comments = Comment::all();
-      
-       // Return Json Response  
-       return response()->json([
-          'comments' => $comments
-       ],200);
+        $comments = Comment::paginate(15);
+
+        return response()->json([
+            'comments' => $comments
+        ], 200);
     }
 
-    
-
-    
     public function store(CommentStoreRequest $request)
     {
         try {
-           
-            // Create Comment
-            Comment::create([
-                'label' => $request->label,
-                'user' => $request->user,
-                'product' => $request->product
+            $comment = Comment::create([
+                'label'   => $request->label,
+                'user'    => $request->user,
+                'product' => $request->product,
             ]);
-      
-            // Return Json Response
+
             return response()->json([
-                'message' => "Comment successfully created."
-            ],200);
+                'message' => "Comment successfully created.",
+                'comment' => $comment,
+            ], 201);
         } catch (\Exception $e) {
-            // Return Json Response
             return response()->json([
-                'message' => "Something went really wrong!"
-            ],500);
+                'message' => "Failed to create comment.",
+                'error'   => $e->getMessage(),
+            ], 500);
         }
     }
 
-
     public function show($id)
     {
-         // Comment Detail 
         $comment = Comment::find($id);
-        if(!$comment){
+
+        if (!$comment) {
             return response()->json([
-                'message'=>'Discount Not Found.'
-            ],404);
-       }
-      
-       // Return Json Response
-       return response()->json([
-          'comment' => $comment
-       ],200);
+                'message' => 'Comment not found.'
+            ], 404);
+        }
+
+        return response()->json([
+            'comment' => $comment
+        ], 200);
     }
 
     public function update(CommentStoreRequest $request, $id)
     {
         try {
-            // Find Comment
             $comment = Comment::find($id);
-            if(!$comment){
-              return response()->json([
-                'message'=>'Comment Not Found.'
-              ],404);
+
+            if (!$comment) {
+                return response()->json([
+                    'message' => 'Comment not found.'
+                ], 404);
             }
-      
-            //echo "request : $request->image";
-            $comment->label = $request->label;
-            $comment->user = $request->user;
+
+            $comment->label   = $request->label;
+            $comment->user    = $request->user;
             $comment->product = $request->product;
-            
-      
-            // Update Comment
             $comment->save();
-      
-            // Return Json Response
+
             return response()->json([
                 'message' => "Comment successfully updated."
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
-            // Return Json Response
             return response()->json([
-                'message' => "Something went really wrong!"
-            ],500);
+                'message' => "Failed to update comment.",
+                'error'   => $e->getMessage(),
+            ], 500);
         }
     }
-  
+
     public function destroy($id)
     {
-          // Detail 
-          $comment = Comment::find($id);
-          if(!$comment){
+        $comment = Comment::find($id);
+
+        if (!$comment) {
             return response()->json([
-               'message'=>'Comment Not Found.'
-            ],404);
+                'message' => 'Comment not found.'
+            ], 404);
         }
-        
-          // Delete Comment
-          $comment->delete();
-        
-          // Return Json Response
-          return response()->json([
-              'message' => "Comment successfully deleted."
-          ],200);
+
+        $comment->delete();
+
+        return response()->json([
+            'message' => "Comment successfully deleted."
+        ], 200);
     }
 }

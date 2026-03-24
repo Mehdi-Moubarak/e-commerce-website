@@ -1,37 +1,33 @@
 import React from 'react';
-import axios from "axios";
-import { useState  , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
+import { axios, STORAGE_URL } from '../../api';
 
 
 export default function ProductList(){
     const[product, setProduct]= useState([]);
-     
+
     useEffect( ()=>{
-        const getProduct= ()=>{
-            fetch("http://127.0.0.1:8000/api/products")
-            .then(res=>{ return res.json()})
-            .then(response=>{ 
-                console.log(response.products)
-                setProduct(response.products)
+        axios.get("/products")
+            .then(response => {
+                setProduct(response.data.products.data || response.data.products);
             })
-            .catch(error=>{ console.log(error)});
-        }
-        getProduct();
+            .catch(error => { console.log(error) });
     },[]);
-  
+
     const deleteProduct = (id) => {
-        axios.delete('http://127.0.0.1:8000/api/productdelete/'+id).then(function(response){
+        axios.delete('/productdelete/'+id).then(function(response){
             console.log(response.data);
             alert("Successfully Deleted");
+            setProduct(product.filter(p => p.id !== id));
         });
     }
-    
+
     return(
         <div className="container">
-            
+
             <div className="row">
-            
+
                 <h1>Product List</h1>
                 <div className='row'>
                         <div className='col-9'>
@@ -42,7 +38,7 @@ export default function ProductList(){
                         </div>
                     </div>
                 <div>
-                
+
                 </div>
                <br />
                 <div className="input-group mb-3">
@@ -53,12 +49,12 @@ export default function ProductList(){
                         <option value="Status">Status</option>
                     </select>
                     <input type="text" name="" id="filter" placeholder=' Enter ....'/>
-                    <button class="btn btn-outline-primary" type="button" id='filterBtn'>Button</button>
-                </div> 
+                    <button className="btn btn-outline-primary" type="button" id='filterBtn'>Button</button>
+                </div>
             <div>
                 <table className="table table-sm table-bordered" >
                     <thead>
-                       
+                        <tr>
                         <th >Id </th>
                         <th >Image</th>
                         <th>Name</th>
@@ -68,13 +64,14 @@ export default function ProductList(){
                         <th>Evaluation</th>
                         <th>Category</th>
                         <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {
                             product.map((pdata, index)=>(
                                 <tr key={index}>
                                     <td>{pdata.id} </td>
-                                    <td><img src={`http://127.0.0.1:8000/storage/${pdata.image}`} alt="" height={50} width={90}/></td>
+                                    <td><img src={`${STORAGE_URL}/${pdata.image}`} alt="" height={50} width={90}/></td>
                                     <td>{pdata.name} </td>
                                     <td>{pdata.description} </td>
                                     <td>{pdata.stock} </td>
@@ -94,7 +91,6 @@ export default function ProductList(){
             </div>
             </div>
         </div>
-        
+
     )
 };
-
