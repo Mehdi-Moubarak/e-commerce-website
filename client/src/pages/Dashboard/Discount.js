@@ -1,29 +1,25 @@
 import React from 'react';
-import { useState  , useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
+import { axios } from '../../api';
 
 export default function Discount()  {
 
   const[discount, setDiscount]= useState([]);
-     
+
   useEffect( ()=>{
-      const getDiscount= ()=>{
-          fetch("http://127.0.0.1:8000/api/discounts")
-          .then(res=>{ return res.json()})
-          .then(response=>{ 
-              console.log(response.discounts)
-              setDiscount(response.discounts)
+      axios.get("/discounts")
+          .then(response => {
+              setDiscount(response.data.discounts.data || response.data.discounts);
           })
-          .catch(error=>{ console.log(error)});
-      }
-      getDiscount();
+          .catch(error => { console.log(error) });
   },[]);
 
   const deleteDiscount = (id) => {
-      axios.delete('http://127.0.0.1:8000/api/discountDelete/'+id).then(function(response){
+      axios.delete('/discountDelete/'+id).then(function(response){
           console.log(response.data);
           alert("Successfully Deleted");
+          setDiscount(discount.filter(d => d.id !== id));
       });
   }
 
@@ -45,7 +41,7 @@ export default function Discount()  {
                       </div>
                     </div>
                     <br />
-                    
+
                     <table className="table table-sm table-bordered">
                         <thead>
                         <tr>
@@ -60,23 +56,23 @@ export default function Discount()  {
                         <tbody>
                         {
                             discount.map((pdata, index)=>(
-                                <tr>
+                                <tr key={index}>
                                 <td>{pdata.id } </td>
                                 <td>{pdata.label } </td>
                                 <td>{pdata.value } </td>
                                 <td>{pdata.created_at } </td>
                                 <td>{pdata.updated_at } </td>
-                      
+
                                 <td>
-                                <button onClick={() => deleteDiscount(pdata.id)} className="btn btn-success">Delete</button>
+                                <button onClick={() => deleteDiscount(pdata.id)} className="btn btn-danger">Delete</button>
                                 </td>
                                 </tr>
                             ))
                         }
                         </tbody>
-                        
+
                     </table>
-                    
+
                       </div>
                     </div>
                 </div>
@@ -84,4 +80,3 @@ export default function Discount()  {
         </div>
   )
 }
-

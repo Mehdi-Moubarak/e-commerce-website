@@ -1,38 +1,33 @@
 import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
-
-import { useState  , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
-import axios from "axios";
+import { axios } from '../../api';
 
 export default function Comment(){
     const[comment, setComment]= useState([]);
-     
+
     useEffect( ()=>{
-        const getComment= ()=>{
-            fetch("http://127.0.0.1:8000/api/comments")
-            .then(res=>{ return res.json()})
-            .then(response=>{ 
-                console.log(response.comments)
-                setComment(response.comments)
+        axios.get("/comments")
+            .then(response => {
+                setComment(response.data.comments.data || response.data.comments);
             })
-            .catch(error=>{ console.log(error)});
-        }
-        getComment();
+            .catch(error => { console.log(error) });
     },[]);
-  
+
     const deleteComment = (id) => {
-        axios.delete('http://127.0.0.1:8000/api/commentsDelete/'+id).then(function(response){
+        axios.delete('/commentsDelete/'+id).then(function(response){
             console.log(response.data);
             alert("Successfully Deleted");
+            setComment(comment.filter(c => c.id !== id));
         });
     }
-    
-    
+
+
     return(
-        
+
         <div className="container">
-             
+
             <div className="row">
                 <h1>Comments List</h1>
                 <div className='card'>
@@ -47,19 +42,20 @@ export default function Comment(){
                                     <option value="Status">ID</option>
                                 </select>
                                 <input type="text" name="" id="filter" placeholder=' Enter ....'/>
-                                <button class="btn btn-outline-primary" type="button" id='filterBtn'>Button</button>
+                                <button className="btn btn-outline-primary" type="button" id='filterBtn'>Button</button>
                             </div>
-                        </div> 
+                        </div>
                         <div className='col-2'>
                             <button onClick={() => window.location.reload()} className='btn btn-primary'>Refresh</button>
-                        </div> 
+                        </div>
                     </div>
 
             <div>
             <br />
-           
+
                 <table className="table table-sm table-bordered" >
                     <thead>
+                        <tr>
                         <th >Id </th>
                         <th >Label</th>
                         <th style={{width: '100px'}}>User</th>
@@ -67,19 +63,20 @@ export default function Comment(){
                         <th>created_at</th>
                         <th>updated_at</th>
                         <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {
                             comment.map((pdata, index)=>(
-                                <tr>
+                                <tr key={index}>
                                 <td>{pdata.id } </td>
                                 <td>{pdata.label } </td>
-                                <td>{pdata.user.first_name } {pdata.user.last_name } </td>
-                                <td>{pdata.product.name } </td>
+                                <td>{pdata.user?.first_name} {pdata.user?.last_name}</td>
+                                <td>{pdata.product?.name}</td>
                                 <td>{pdata.created_at } </td>
                                 <td>{pdata.updated_at } </td>
                                 <td>
-                                <button onClick={() => deleteComment(pdata.id)} className="btn btn-success">Delete</button>
+                                <button onClick={() => deleteComment(pdata.id)} className="btn btn-danger">Delete</button>
                                 </td>
                                 </tr>
                             ))
@@ -92,5 +89,3 @@ export default function Comment(){
         </div>
     )
 }
-
-

@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     axios
-      .post("http://127.0.0.1:8000/api/login", userData)
+      .post("/login", userData)
       .then((result) => {
         localStorage.setItem("token", result.data.token);
         setUser(result.data.user);
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     await axios
-      .post("http://127.0.0.1:8000/api/register", userData)
+      .post("/register", userData)
       .then((result) => {
         localStorage.setItem("token", result.data.token);
         setUser(result.data.user);
