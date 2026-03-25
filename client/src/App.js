@@ -31,10 +31,12 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
 import { AuthProvider } from "./context/authContext";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           <Route path="/" element={<AdminLayout />}>

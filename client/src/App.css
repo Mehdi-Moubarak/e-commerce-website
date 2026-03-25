@@ -111,11 +111,13 @@ a.more {
   width: calc(100% - 16px);
 }
 
-.custom-navbar .custom-navbar-nav li.active a {
+.custom-navbar .custom-navbar-nav li.active a,
+.custom-navbar .custom-navbar-nav li a.active {
   opacity: 1;
 }
 
-.custom-navbar .custom-navbar-nav li.active a:before {
+.custom-navbar .custom-navbar-nav li.active a:before,
+.custom-navbar .custom-navbar-nav li a.active:before {
   width: calc(100% - 16px);
 }
 

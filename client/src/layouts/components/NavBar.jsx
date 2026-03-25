@@ -42,7 +42,10 @@ function NavBar() {
                   <li key={item.name}>
                     <NavLink
                       to={item.href}
-                      className="nav-link text-decoration-none"
+                      end={item.href === "/"}
+                      className={({ isActive }) =>
+                        `nav-link text-decoration-none${isActive ? " active" : ""}`
+                      }
                     >
                       {item.name}
                     </NavLink>
@@ -50,7 +53,12 @@ function NavBar() {
                 ))}
                 {user && user.role === "admin" && (
                   <li>
-                    <NavLink to="/dashboard" className="nav-link text-decoration-none">
+                    <NavLink
+                      to="/dashboard"
+                      className={({ isActive }) =>
+                        `nav-link text-decoration-none${isActive ? " active" : ""}`
+                      }
+                    >
                       Admin
                     </NavLink>
                   </li>
