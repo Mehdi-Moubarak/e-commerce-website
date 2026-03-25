@@ -316,11 +316,30 @@ a.more {
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero h1 {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero h1 {
+    font-size: 2.875rem;
+  }
 }
 
 @media (min-width: 1400px) {
   .hero h1 {
-    font-size: 54px;
+    font-size: 3.375rem;
   }
 }
 

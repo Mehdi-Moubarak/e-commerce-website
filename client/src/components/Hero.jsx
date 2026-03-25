@@ -6,7 +6,7 @@ const Hero = ({ title }) => {
     <div>
       <div className="hero">
         <div className="container">
-          <div className="row justify-content-between">
+          <div className="row justify-content-between align-items-center">
             <div className="col-lg-5">
               <div className="intro-excerpt">
                 <h1>{title}</h1>
