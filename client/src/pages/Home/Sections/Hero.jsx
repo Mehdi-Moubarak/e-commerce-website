@@ -11,7 +11,7 @@ function Hero() {
             <div className="intro-excerpt">
               <h1>
                 Modern Interior{" "}
-                <span clsasNclassName="d-block">Design Studio</span>
+                <span className="d-block">Design Studio</span>
               </h1>
               <p className="mb-4">
                 Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet

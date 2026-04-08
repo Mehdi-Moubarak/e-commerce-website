@@ -8,36 +8,37 @@ export default function Dashboard() {
                     <h1>Dashboard</h1>
                     <br />
                 </div>
-                
+
                 <div className='col-md-4'>
-                    <div class="card text-white bg-danger mb-3" style={{width: '18rem'}}>
-                        <div class="card-header">Header</div>
-                        <div class="card-body">
-                            <h5 class="card-title">Danger card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <div className="card text-white bg-danger mb-3" style={{ width: '18rem' }}>
+                        <div className="card-header">Products</div>
+                        <div className="card-body">
+                            <h5 className="card-title">Manage Products</h5>
+                            <p className="card-text">View, create, update and delete products from your store.</p>
                         </div>
-                </div>
-            </div>
-            <div className='col-md-4'>
-                <div class="card text-white bg-warning mb-3" style={{width: '18rem'}}>
-                    <div class="card-header">Header</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Danger card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                     </div>
                 </div>
-            </div>
-            <div className='col-md-4'>
-                <div class="card text-white bg-info mb-3" style={{width: '18rem'}}>
-                    <div class="card-header">Header</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Danger card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+                <div className='col-md-4'>
+                    <div className="card text-white bg-warning mb-3" style={{ width: '18rem' }}>
+                        <div className="card-header">Orders</div>
+                        <div className="card-body">
+                            <h5 className="card-title">Manage Orders</h5>
+                            <p className="card-text">Track and manage customer orders and payments.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <div className='col-md-4'>
+                    <div className="card text-white bg-info mb-3" style={{ width: '18rem' }}>
+                        <div className="card-header">Categories</div>
+                        <div className="card-body">
+                            <h5 className="card-title">Manage Categories</h5>
+                            <p className="card-text">Organise your products into categories.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
-};
-
+}

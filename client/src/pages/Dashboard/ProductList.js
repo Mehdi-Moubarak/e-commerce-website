@@ -77,8 +77,8 @@ export default function ProductList() {
                                     <td>{pdata.evaluation}</td>
                                     <td>{pdata.category}</td>
                                     <td>
-                                        <NavLink to="/productView" className="btn btn-outline-success btn-sm me-1">View</NavLink>
-                                        <NavLink to="/productUpdate" className="btn btn-outline-primary btn-sm me-1">Update</NavLink>
+                                        <NavLink to={`/productView?id=${pdata.id}`} className="btn btn-outline-success btn-sm me-1">View</NavLink>
+                                        <NavLink to={`/productUpdate?id=${pdata.id}`} className="btn btn-outline-primary btn-sm me-1">Update</NavLink>
                                         {confirmId === pdata.id ? (
                                             <>
                                                 <span className="me-1 text-danger small fw-bold">Sure?</span>
