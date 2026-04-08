@@ -33,6 +33,7 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
 import NotFound from "./pages/NotFound";
+import Product from "./pages/Product";
 import { AuthProvider } from "./context/authContext";
 import { CartProvider } from "./context/cartContext";
 import ScrollToTop from "./components/ScrollToTop";
@@ -68,6 +69,7 @@ const App = () => {
               <Route path={ROUTES.services} element={<Services />} />
               <Route path={ROUTES.cart} element={<Cart />} />
               <Route path={ROUTES.checkout} element={<Checkout />} />
+              <Route path="product/:id" element={<Product />} />
             </Route>
             <Route element={<AuthLayout />}>
               <Route
