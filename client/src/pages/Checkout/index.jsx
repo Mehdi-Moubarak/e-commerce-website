@@ -1,11 +1,24 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
 import usePageTitle from "../../hooks/usePageTitle";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   usePageTitle("Checkout");
-  const { items, cartTotal } = useContext(CartContext);
+  const { items, cartTotal, clearCart } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  const handlePlaceOrder = (e) => {
+    e.preventDefault();
+    if (items.length === 0) {
+      toast.error("Your cart is empty.");
+      return;
+    }
+    clearCart();
+    toast.success("Order placed! Thank you for your purchase.");
+    navigate("/");
+  };
 
   return (
     <div>
@@ -530,12 +543,12 @@ const Checkout = () => {
                     </div>
 
                     <div className="form-group">
-                      <NavLink
-                        className="btn btn-black btn-lg py-3 btn-block"
-                        to={"/"}
+                      <button
+                        className="btn btn-black btn-lg py-3 btn-block w-100"
+                        onClick={handlePlaceOrder}
                       >
                         Place Order
-                      </NavLink>
+                      </button>
                     </div>
                   </div>
                 </div>
