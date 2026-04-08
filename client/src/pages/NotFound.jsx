@@ -1,7 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import usePageTitle from "../hooks/usePageTitle";
 
 const NotFound = () => {
+  usePageTitle("Page Not Found");
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-center text-center"

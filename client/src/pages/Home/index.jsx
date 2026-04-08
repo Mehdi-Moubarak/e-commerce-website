@@ -5,23 +5,18 @@ import ExporeProducts from "./Sections/ExporeProducts";
 import Hero from "../../components/Hero";
 import WeHelp from "./Sections/WeHelp";
 import PopularProducts from "./Sections/PopularProducts";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const Home = () => {
+  usePageTitle("Home");
   return (
     <>
       <Hero title="This is where we make art comes to life" />
-
       <ExporeProducts />
-
       <WhyUs />
-
       <WeHelp />
-
       <PopularProducts />
-
       <Testimonials />
-
-      
     </>
   );
 };

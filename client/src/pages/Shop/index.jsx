@@ -1,14 +1,16 @@
-import React from 'react'
-import Hero from './Sections/Hero'
-import ProductGrid from './Sections/ProductGrid'
+import React from "react";
+import Hero from "./Sections/Hero";
+import ProductGrid from "./Sections/ProductGrid";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const Shop = () => {
+  usePageTitle("Shop");
   return (
     <div>
-        <Hero/>
-        <ProductGrid/>
+      <Hero />
+      <ProductGrid />
     </div>
-  )
-}
+  );
+};
 
-export default Shop
+export default Shop;

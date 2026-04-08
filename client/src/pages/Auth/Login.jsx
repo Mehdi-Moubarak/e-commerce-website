@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import "../../style.css";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
+import usePageTitle from "../../hooks/usePageTitle";
 
 function Login({ image, title, caption }) {
+  usePageTitle("Login");
   const { setImage, setTitle, setCaption } = useOutletContext();
   const { user, login } = useContext(AuthContext);
 

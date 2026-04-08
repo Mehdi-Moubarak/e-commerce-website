@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const Checkout = () => {
+  usePageTitle("Checkout");
   const { items, cartTotal } = useContext(CartContext);
 
   return (
