@@ -19,6 +19,7 @@ const SignUp = ({ image, title, caption }) => {
     last_name: "",
     email: "",
     password: "",
+    confirm_password: "",
   });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -33,6 +34,24 @@ const SignUp = ({ image, title, caption }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+
+    if (!formData.first_name.trim()) {
+      setError("First name is required.");
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (formData.password !== formData.confirm_password) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       await register({
@@ -40,7 +59,7 @@ const SignUp = ({ image, title, caption }) => {
         last_name: formData.last_name,
         email: formData.email,
         password: formData.password,
-        password_confirmation: formData.password,
+        password_confirmation: formData.confirm_password,
       });
     } catch (err) {
       const data = err?.response?.data;
@@ -111,7 +130,7 @@ const SignUp = ({ image, title, caption }) => {
             type="password"
             className="form-control"
             id="password"
-            placeholder="Password"
+            placeholder="Password (min. 8 characters)"
             value={formData.password}
             onChange={changeData}
             name="password"
@@ -119,7 +138,29 @@ const SignUp = ({ image, title, caption }) => {
           <label htmlFor="password">Password</label>
         </div>
 
-        <div className="d-flex justify-content-between mb-3">
+        <div className="form-floating">
+          <input
+            type="password"
+            className={`form-control ${
+              formData.confirm_password && formData.confirm_password !== formData.password
+                ? "is-invalid"
+                : formData.confirm_password && formData.confirm_password === formData.password
+                ? "is-valid"
+                : ""
+            }`}
+            id="confirm_password"
+            placeholder="Confirm Password"
+            value={formData.confirm_password}
+            onChange={changeData}
+            name="confirm_password"
+          />
+          <label htmlFor="confirm_password">Confirm Password</label>
+          {formData.confirm_password && formData.confirm_password !== formData.password && (
+            <div className="invalid-feedback">Passwords do not match.</div>
+          )}
+        </div>
+
+        <div className="d-flex justify-content-between my-3">
           <div className="form-check">
             <input type="checkbox" className="form-check-input" id="remember" />
             <label htmlFor="remember" className="form-check-label">

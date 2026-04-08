@@ -6,7 +6,12 @@ import { CartContext } from "../../context/cartContext";
 
 function NavBar() {
   const { user, logout } = useContext(AuthContext);
-  const { cartCount } = useContext(CartContext);
+  const { cartCount, clearCart } = useContext(CartContext);
+
+  const handleLogout = () => {
+    clearCart();
+    logout();
+  };
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -93,7 +98,7 @@ function NavBar() {
                       <button
                         className="nav-link btn btn-link"
                         style={{ color: "inherit", background: "none", border: "none", padding: "0.5rem" }}
-                        onClick={logout}
+                        onClick={handleLogout}
                         title="Logout"
                       >
                         <i className="fa fa-sign-out"></i>

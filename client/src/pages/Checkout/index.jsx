@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
 import usePageTitle from "../../hooks/usePageTitle";
 import { toast } from "react-toastify";
@@ -196,7 +196,7 @@ const Checkout = () => {
                           Account Password
                         </label>
                         <input
-                          type="email"
+                          type="password"
                           className="form-control"
                           id="c_account_password"
                           name="c_account_password"
