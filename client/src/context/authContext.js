@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { axios } from "../api";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext();
 
@@ -30,12 +31,14 @@ export const AuthProvider = ({ children }) => {
     const result = await axios.post("/login", userData);
     localStorage.setItem("token", result.data.token);
     setUser(result.data.user);
+    toast.success(`Welcome back, ${result.data.user.first_name}!`);
   };
 
   const register = async (userData) => {
     const result = await axios.post("/register", userData);
     localStorage.setItem("token", result.data.token);
     setUser(result.data.user);
+    toast.success(`Account created! Welcome, ${result.data.user.first_name}!`);
   };
 
   const logout = () => {
@@ -44,10 +47,12 @@ export const AuthProvider = ({ children }) => {
       .then(() => {
         localStorage.removeItem("token");
         setUser(null);
+        toast.info("You have been logged out.");
       })
       .catch(() => {
         localStorage.removeItem("token");
         setUser(null);
+        toast.info("You have been logged out.");
       });
   };
 

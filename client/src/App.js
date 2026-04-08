@@ -1,5 +1,7 @@
 import React from "react";
 import "./App.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AppLayout from "./layouts/AppLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -93,6 +95,15 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={2500}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+          />
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
