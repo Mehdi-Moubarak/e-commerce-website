@@ -1,9 +1,31 @@
-import React from "react";
-import { productsData } from "../../../data/products";
+import React, { useEffect, useState } from "react";
 import ProductCard from "../../../components/ProductCard";
 import { NavLink } from "react-router-dom";
+import { axios, STORAGE_URL } from "../../../api";
 
 function ExporeProducts() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("/products", { params: { per_page: 3 } })
+      .then((res) => {
+        const data = res.data.products?.data || [];
+        setProducts(data.slice(0, 3));
+      })
+      .catch(() => setProducts([]));
+  }, []);
+
+  const displayProducts = products.length > 0
+    ? products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: parseFloat(p.price),
+        image: `${STORAGE_URL}/${p.image}`,
+        short_description: p.short_description || "",
+      }))
+    : [];
+
   return (
     <div className="product-section">
       <div className="container">
@@ -14,7 +36,7 @@ function ExporeProducts() {
             </h2>
             <p className="mb-4">
               Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet
-              velit. Aliquam vulputate velit imperdiet dolor tempor tristique.{" "}
+              velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
             </p>
             <p>
               <NavLink to="/shop" className="btn">
@@ -23,9 +45,9 @@ function ExporeProducts() {
             </p>
           </div>
 
-          {productsData.map((product) => {
-            return <ProductCard product={product} key={product.id}></ProductCard>;
-          })}
+          {displayProducts.map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
         </div>
       </div>
     </div>

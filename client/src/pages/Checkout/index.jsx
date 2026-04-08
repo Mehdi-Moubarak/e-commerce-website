@@ -1,9 +1,10 @@
-import React from "react";
-// import Billing from "./Sections/Billing";
-// import YourOrder from "./Sections/YourOrder";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { CartContext } from "../../context/cartContext";
 
 const Checkout = () => {
+  const { items, cartTotal } = useContext(CartContext);
+
   return (
     <div>
       <div className="untree_co-section">
@@ -414,30 +415,35 @@ const Checkout = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>
-                            Top Up T-Shirt <strong className="mx-2">x</strong> 1
-                          </td>
-                          <td>$250.00</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            Polo Shirt <strong className="mx-2">x</strong> 1
-                          </td>
-                          <td>$100.00</td>
-                        </tr>
+                        {items.map((item) => (
+                          <tr key={item.id}>
+                            <td>
+                              {item.name}{" "}
+                              <strong className="mx-2">x</strong>{" "}
+                              {item.quantity}
+                            </td>
+                            <td>${(item.price * item.quantity).toFixed(2)}</td>
+                          </tr>
+                        ))}
+                        {items.length === 0 && (
+                          <tr>
+                            <td colSpan="2" className="text-center text-muted">
+                              No items in cart
+                            </td>
+                          </tr>
+                        )}
                         <tr>
                           <td className="text-black font-weight-bold">
                             <strong>Cart Subtotal</strong>
                           </td>
-                          <td className="text-black">$350.00</td>
+                          <td className="text-black">${cartTotal.toFixed(2)}</td>
                         </tr>
                         <tr>
                           <td className="text-black font-weight-bold">
                             <strong>Order Total</strong>
                           </td>
                           <td className="text-black font-weight-bold">
-                            <strong>$350.00</strong>
+                            <strong>${cartTotal.toFixed(2)}</strong>
                           </td>
                         </tr>
                       </tbody>

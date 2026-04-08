@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
 import { AuthContext } from "../context/authContext";
-import "../AdminApp.css";
 
-const AdminLayout = () => {
+const AdminGuard = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
 
   if (loading) {
@@ -19,11 +17,7 @@ const AdminLayout = () => {
     return <Navigate to="/" replace />;
   }
 
-  return (
-    <div>
-      <Sidebar />
-    </div>
-  );
+  return children;
 };
 
-export default AdminLayout;
+export default AdminGuard;

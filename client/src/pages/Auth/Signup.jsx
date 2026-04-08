@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
-import { useState } from "react";
-import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 
 const SignUp = ({ image, title, caption }) => {
@@ -20,6 +18,8 @@ const SignUp = ({ image, title, caption }) => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function changeData(event) {
     setFormData((data) => ({
@@ -28,18 +28,29 @@ const SignUp = ({ image, title, caption }) => {
     }));
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const data = {
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      email: formData.email,
-      password: formData.password,
-      password_confirmation: formData.password,
-    };
-
-    register(data);
+    setError("");
+    setSubmitting(true);
+    try {
+      await register({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.password,
+      });
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data?.errors) {
+        const messages = Object.values(data.errors).flat().join(" ");
+        setError(messages);
+      } else {
+        setError(data?.message || "Registration failed. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (user) {
@@ -48,6 +59,11 @@ const SignUp = ({ image, title, caption }) => {
 
   return (
     <>
+      {error && (
+        <div className="alert alert-danger py-2" role="alert">
+          {error}
+        </div>
+      )}
       <form action="#" className="pt-3" onSubmit={handleSubmit}>
         <div className="form-floating">
           <input
@@ -101,7 +117,7 @@ const SignUp = ({ image, title, caption }) => {
           <label htmlFor="password">Password</label>
         </div>
 
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mb-3">
           <div className="form-check">
             <input type="checkbox" className="form-check-input" id="remember" />
             <label htmlFor="remember" className="form-check-label">
@@ -112,8 +128,8 @@ const SignUp = ({ image, title, caption }) => {
         </div>
 
         <div className="d-grid mb-4">
-          <button type="submit" className="btn btn-primary">
-            Create an account
+          <button type="submit" className="btn btn-primary" disabled={submitting}>
+            {submitting ? "Creating account..." : "Create an account"}
           </button>
         </div>
 

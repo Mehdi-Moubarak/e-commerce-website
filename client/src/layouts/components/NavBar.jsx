@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import "../../App.css";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
+import { CartContext } from "../../context/cartContext";
 
 function NavBar() {
   const { user, logout } = useContext(AuthContext);
+  const { cartCount } = useContext(CartContext);
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -67,8 +69,16 @@ function NavBar() {
 
               <ul className="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
                 <li>
-                  <NavLink className="nav-link" to="/cart">
+                  <NavLink className="nav-link position-relative" to="/cart">
                     <i className="fa-solid fa-cart-shopping"></i>
+                    {cartCount > 0 && (
+                      <span
+                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style={{ fontSize: "0.6rem" }}
+                      >
+                        {cartCount}
+                      </span>
+                    )}
                   </NavLink>
                 </li>
                 <li>
@@ -77,6 +87,7 @@ function NavBar() {
                       className="nav-link btn btn-link"
                       style={{ color: "inherit", background: "none", border: "none", padding: "0.5rem" }}
                       onClick={logout}
+                      title={`Logout (${user.first_name || user.email})`}
                     >
                       <i className="fa fa-sign-out"></i>
                     </button>
