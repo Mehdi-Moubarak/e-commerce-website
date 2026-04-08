@@ -81,16 +81,24 @@ function NavBar() {
                     )}
                   </NavLink>
                 </li>
-                <li>
+                <li className="d-flex align-items-center">
                   {user ? (
-                    <button
-                      className="nav-link btn btn-link"
-                      style={{ color: "inherit", background: "none", border: "none", padding: "0.5rem" }}
-                      onClick={logout}
-                      title={`Logout (${user.first_name || user.email})`}
-                    >
-                      <i className="fa fa-sign-out"></i>
-                    </button>
+                    <>
+                      <span
+                        className="nav-link text-white-50 small me-1 d-none d-md-inline"
+                        style={{ cursor: "default" }}
+                      >
+                        Hi, {user.first_name || user.email}
+                      </span>
+                      <button
+                        className="nav-link btn btn-link"
+                        style={{ color: "inherit", background: "none", border: "none", padding: "0.5rem" }}
+                        onClick={logout}
+                        title="Logout"
+                      >
+                        <i className="fa fa-sign-out"></i>
+                      </button>
+                    </>
                   ) : (
                     <NavLink className="nav-link" to="/login">
                       <i className="fa-solid fa-user"></i>

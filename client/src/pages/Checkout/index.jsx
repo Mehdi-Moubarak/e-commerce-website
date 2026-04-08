@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
 import usePageTitle from "../../hooks/usePageTitle";
@@ -9,12 +9,15 @@ const Checkout = () => {
   const { items, cartTotal, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (items.length === 0) {
+      toast.info("Your cart is empty. Add items before checking out.");
+      navigate("/cart");
+    }
+  }, [items, navigate]);
+
   const handlePlaceOrder = (e) => {
     e.preventDefault();
-    if (items.length === 0) {
-      toast.error("Your cart is empty.");
-      return;
-    }
     clearCart();
     toast.success("Order placed! Thank you for your purchase.");
     navigate("/");
