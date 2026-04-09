@@ -11,7 +11,11 @@ const Home = () => {
   usePageTitle("Home");
   return (
     <>
-      <Hero title="This is where we make art comes to life" />
+      <Hero
+        title="This is where we make art comes to life"
+        description="Discover our curated collection of modern furniture and interior design pieces crafted to transform your living space."
+        buttonText="Shop Now"
+      />
       <ExporeProducts />
       <WhyUs />
       <WeHelp />

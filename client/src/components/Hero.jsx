@@ -1,7 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../utils/constants";
-const Hero = ({ title }) => {
+
+const Hero = ({ title, description, buttonText, buttonLink }) => {
   return (
     <div>
       <div className="hero">
@@ -10,17 +11,14 @@ const Hero = ({ title }) => {
             <div className="col-lg-5">
               <div className="intro-excerpt">
                 <h1>{title}</h1>
-                <p className="mb-4">
-                  Donec vitae odio quis nisl dapibus malesuada. Nullam ac
-                  aliquet velit. Aliquam vulputate velit imperdiet dolor tempor
-                  tristique.
-                </p>
-                <p>
-                  <NavLink to={ROUTES.shop} className="btn btn-secondary me-2">
-                    Shop Now
-                  </NavLink>
-                  
-                </p>
+                {description && <p className="mb-4">{description}</p>}
+                {buttonText && (
+                  <p>
+                    <NavLink to={buttonLink || ROUTES.shop} className="btn btn-secondary me-2">
+                      {buttonText}
+                    </NavLink>
+                  </p>
+                )}
               </div>
             </div>
             <div className="col-lg-7">
