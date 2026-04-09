@@ -1,13 +1,33 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { CartContext } from "../../context/cartContext";
+import { AuthContext } from "../../context/authContext";
 import usePageTitle from "../../hooks/usePageTitle";
 import { toast } from "react-toastify";
+import { axios } from "../../api";
 
 const Checkout = () => {
   usePageTitle("Checkout");
   const { items, cartTotal, clearCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: user?.address || "",
+    state: "",
+    postal: "",
+    notes: "",
+    payment_method: "bank_transfer",
+  });
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [placing, setPlacing] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (items.length === 0) {
@@ -16,548 +36,248 @@ const Checkout = () => {
     }
   }, [items, navigate]);
 
-  const handlePlaceOrder = (e) => {
+  // Prefill form when user loads
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        first_name: user.first_name || prev.first_name,
+        last_name: user.last_name || prev.last_name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        address: user.address || prev.address,
+      }));
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const res = await axios.get(`/coupons/${couponCode.trim()}`);
+      setDiscount(res.data.discount);
+      toast.success(`Coupon applied! ${res.data.discount.value}% off`);
+    } catch {
+      setDiscount(null);
+      toast.error("Invalid coupon code.");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const discountAmount = discount ? parseFloat((cartTotal * (discount.value / 100)).toFixed(2)) : 0;
+  const orderTotal = Math.max(0, cartTotal - discountAmount);
+
+  const validate = () => {
+    const e = {};
+    if (!form.first_name.trim()) e.first_name = "Required";
+    if (!form.last_name.trim()) e.last_name = "Required";
+    if (!form.email.trim()) e.email = "Required";
+    if (!form.address.trim()) e.address = "Required";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    clearCart();
-    toast.success("Order placed! Thank you for your purchase.");
-    navigate("/");
+    if (!validate()) return;
+
+    if (!user) {
+      toast.error("Please log in to place an order.");
+      navigate("/login", { state: { from: "/checkout" } });
+      return;
+    }
+
+    setPlacing(true);
+    try {
+      const billing = `${form.first_name} ${form.last_name}, ${form.address}, ${form.state} ${form.postal} — ${form.email} ${form.phone}`.trim();
+
+      const res = await axios.post("/orders", {
+        items: items.map((i) => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
+        billing_address: billing,
+        payment_method: form.payment_method,
+        notes: form.notes,
+        coupon_code: discount ? couponCode : undefined,
+      });
+
+      clearCart();
+      toast.success(`Order #${res.data.order.id} placed! Thank you.`);
+      navigate("/my-orders");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to place order. Please try again.";
+      toast.error(msg);
+    } finally {
+      setPlacing(false);
+    }
   };
 
   return (
     <div>
       <div className="untree_co-section">
         <div className="container">
-          <div className="row mb-5">
-            <div className="col-md-12">
-              <div className="border p-4 rounded" role="alert">
-                Returning customer? <NavLink to="/login">Click here</NavLink> to
-                login
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6 mb-5 mb-md-0">
-              <h2 className="h3 mb-3 text-black">Billing Details</h2>
-              <div className="p-3 p-lg-5 border bg-white">
-                <div className="form-group">
-                  <label htmlFor="c_country" className="text-black">
-                    Country <span className="text-danger">*</span>
-                  </label>
-                  <select id="c_country" className="form-control">
-                    <option value="1">Select a country</option>
-                    <option value="2">bangladesh</option>
-                    <option value="3">Algeria</option>
-                    <option value="4">Afghanistan</option>
-                    <option value="5">Ghana</option>
-                    <option value="6">Albania</option>
-                    <option value="7">Bahrain</option>
-                    <option value="8">Colombia</option>
-                    <option value="9">Dominican Republic</option>
-                  </select>
-                </div>
-                <div className="form-group row">
-                  <div className="col-md-6">
-                    <label htmlFor="c_fname" className="text-black">
-                      First Name <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_fname"
-                      name="c_fname"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="c_lname" className="text-black">
-                      Last Name <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_lname"
-                      name="c_lname"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group row">
-                  <div className="col-md-12">
-                    <label htmlFor="c_companyname" className="text-black">
-                      Company Name{" "}
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_companyname"
-                      name="c_companyname"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group row">
-                  <div className="col-md-12">
-                    <label htmlFor="c_address" className="text-black">
-                      Address <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_address"
-                      name="c_address"
-                      placeholder="Street address"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group mt-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Apartment, suite, unit etc. (optional)"
-                  />
-                </div>
-
-                <div className="form-group row">
-                  <div className="col-md-6">
-                    <label htmlFor="c_state_country" className="text-black">
-                      State / Country <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_state_country"
-                      name="c_state_country"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="c_postal_zip" className="text-black">
-                      Posta / Zip <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_postal_zip"
-                      name="c_postal_zip"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group row mb-5">
-                  <div className="col-md-6">
-                    <label htmlFor="c_email_address" className="text-black">
-                      Email Address <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_email_address"
-                      name="c_email_address"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="c_phone" className="text-black">
-                      Phone <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="c_phone"
-                      name="c_phone"
-                      placeholder="Phone Number"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label
-                    htmlFor="c_create_account"
-                    className="text-black"
-                    data-bs-toggle="collapse"
-                    href="#create_an_account"
-                    role="button"
-                    aria-expanded="false"
-                    aria-controls="create_an_account"
-                  >
-                    <input type="checkbox" value="1" id="c_create_account" />{" "}
-                    Create an account?
-                  </label>
-                  <div className="collapse" id="create_an_account">
-                    <div className="py-2 mb-4">
-                      <p className="mb-3">
-                        Create an account by entering the information below. If
-                        you are a returning customer please login at the top of
-                        the page.
-                      </p>
-                      <div className="form-group">
-                        <label
-                          htmlFor="c_account_password"
-                          className="text-black"
-                        >
-                          Account Password
-                        </label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          id="c_account_password"
-                          name="c_account_password"
-                          placeholder=""
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label
-                    htmlFor="c_ship_different_address"
-                    className="text-black"
-                    data-bs-toggle="collapse"
-                    href="#ship_different_address"
-                    role="button"
-                    aria-expanded="false"
-                    aria-controls="ship_different_address"
-                  >
-                    <input
-                      type="checkbox"
-                      value="1"
-                      id="c_ship_different_address"
-                    />{" "}
-                    Ship To A Different Address?
-                  </label>
-                  <div className="collapse" id="ship_different_address">
-                    <div className="py-2">
-                      <div className="form-group">
-                        <label htmlFor="c_diff_country" className="text-black">
-                          Country <span className="text-danger">*</span>
-                        </label>
-                        <select id="c_diff_country" className="form-control">
-                          <option value="1">Select a country</option>
-                          <option value="2">bangladesh</option>
-                          <option value="3">Algeria</option>
-                          <option value="4">Afghanistan</option>
-                          <option value="5">Ghana</option>
-                          <option value="6">Albania</option>
-                          <option value="7">Bahrain</option>
-                          <option value="8">Colombia</option>
-                          <option value="9">Dominican Republic</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group row">
-                        <div className="col-md-6">
-                          <label htmlFor="c_diff_fname" className="text-black">
-                            First Name <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_fname"
-                            name="c_diff_fname"
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label htmlFor="c_diff_lname" className="text-black">
-                            Last Name <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_lname"
-                            name="c_diff_lname"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group row">
-                        <div className="col-md-12">
-                          <label
-                            htmlFor="c_diff_companyname"
-                            className="text-black"
-                          >
-                            Company Name{" "}
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_companyname"
-                            name="c_diff_companyname"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group row  mb-3">
-                        <div className="col-md-12">
-                          <label
-                            htmlFor="c_diff_address"
-                            className="text-black"
-                          >
-                            Address <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_address"
-                            name="c_diff_address"
-                            placeholder="Street address"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Apartment, suite, unit etc. (optional)"
-                        />
-                      </div>
-
-                      <div className="form-group row">
-                        <div className="col-md-6">
-                          <label
-                            htmlFor="c_diff_state_country"
-                            className="text-black"
-                          >
-                            State / Country{" "}
-                            <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_state_country"
-                            name="c_diff_state_country"
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label
-                            htmlFor="c_diff_postal_zip"
-                            className="text-black"
-                          >
-                            Posta / Zip <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_postal_zip"
-                            name="c_diff_postal_zip"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group row mb-5">
-                        <div className="col-md-6">
-                          <label
-                            htmlFor="c_diff_email_address"
-                            className="text-black"
-                          >
-                            Email Address <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_email_address"
-                            name="c_diff_email_address"
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label htmlFor="c_diff_phone" className="text-black">
-                            Phone <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="c_diff_phone"
-                            name="c_diff_phone"
-                            placeholder="Phone Number"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="c_order_notes" className="text-black">
-                    Order Notes
-                  </label>
-                  <textarea
-                    name="c_order_notes"
-                    id="c_order_notes"
-                    cols="30"
-                    rows="5"
-                    className="form-control"
-                    placeholder="Write your notes here..."
-                  ></textarea>
+          {!user && (
+            <div className="row mb-5">
+              <div className="col-md-12">
+                <div className="border p-4 rounded" role="alert">
+                  Returning customer? <NavLink to="/login" state={{ from: "/checkout" }}>Click here to login</NavLink>
                 </div>
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="row mb-5">
-                <div className="col-md-12">
-                  <h2 className="h3 mb-3 text-black">Coupon Code</h2>
-                  <div className="p-3 p-lg-5 border bg-white">
-                    <label htmlFor="c_code" className="text-black mb-3">
-                      Enter your coupon code if you have one
-                    </label>
-                    <div className="input-group w-75 couponcode-wrap">
-                      <input
-                        type="text"
-                        className="form-control me-2"
-                        id="c_code"
-                        placeholder="Coupon Code"
-                        aria-label="Coupon Code"
-                        aria-describedby="button-addon2"
-                      />
-                      <div className="input-group-append">
-                        <button
-                          className="btn btn-black btn-sm"
-                          type="button"
-                          id="button-addon2"
-                        >
-                          Apply
+          )}
+          <form onSubmit={handlePlaceOrder}>
+            <div className="row">
+              {/* Billing Details */}
+              <div className="col-md-6 mb-5 mb-md-0">
+                <h2 className="h3 mb-3 text-black">Billing Details</h2>
+                <div className="p-3 p-lg-5 border bg-white">
+                  <div className="form-group row">
+                    <div className="col-md-6">
+                      <label className="text-black">First Name <span className="text-danger">*</span></label>
+                      <input name="first_name" value={form.first_name} onChange={handleChange}
+                        className={`form-control ${errors.first_name ? "is-invalid" : ""}`} />
+                      {errors.first_name && <div className="invalid-feedback">{errors.first_name}</div>}
+                    </div>
+                    <div className="col-md-6">
+                      <label className="text-black">Last Name <span className="text-danger">*</span></label>
+                      <input name="last_name" value={form.last_name} onChange={handleChange}
+                        className={`form-control ${errors.last_name ? "is-invalid" : ""}`} />
+                      {errors.last_name && <div className="invalid-feedback">{errors.last_name}</div>}
+                    </div>
+                  </div>
+                  <div className="form-group row mt-3">
+                    <div className="col-md-12">
+                      <label className="text-black">Address <span className="text-danger">*</span></label>
+                      <input name="address" value={form.address} onChange={handleChange}
+                        placeholder="Street address"
+                        className={`form-control ${errors.address ? "is-invalid" : ""}`} />
+                      {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+                    </div>
+                  </div>
+                  <div className="form-group row mt-3">
+                    <div className="col-md-6">
+                      <label className="text-black">State / Region</label>
+                      <input name="state" value={form.state} onChange={handleChange} className="form-control" />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="text-black">Postal / Zip</label>
+                      <input name="postal" value={form.postal} onChange={handleChange} className="form-control" />
+                    </div>
+                  </div>
+                  <div className="form-group row mt-3 mb-3">
+                    <div className="col-md-6">
+                      <label className="text-black">Email <span className="text-danger">*</span></label>
+                      <input name="email" type="email" value={form.email} onChange={handleChange}
+                        className={`form-control ${errors.email ? "is-invalid" : ""}`} />
+                      {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                    </div>
+                    <div className="col-md-6">
+                      <label className="text-black">Phone</label>
+                      <input name="phone" value={form.phone} onChange={handleChange} className="form-control" />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="text-black">Order Notes</label>
+                    <textarea name="notes" value={form.notes} onChange={handleChange}
+                      rows="3" className="form-control" placeholder="Any special instructions..." />
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Summary */}
+              <div className="col-md-6">
+                {/* Coupon */}
+                <div className="row mb-5">
+                  <div className="col-md-12">
+                    <h2 className="h3 mb-3 text-black">Coupon Code</h2>
+                    <div className="p-3 p-lg-5 border bg-white">
+                      <label className="text-black mb-3">Enter your coupon code if you have one</label>
+                      <div className="input-group couponcode-wrap">
+                        <input type="text" className="form-control me-2" placeholder="Coupon Code"
+                          value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
+                        <button className="btn btn-secondary btn-sm" type="button"
+                          onClick={applyCoupon} disabled={couponLoading}>
+                          {couponLoading ? "..." : "Apply"}
                         </button>
                       </div>
+                      {discount && (
+                        <p className="text-success mt-2 mb-0">
+                          ✓ {discount.value}% discount applied (–${discountAmount.toFixed(2)})
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="row mb-5">
-                <div className="col-md-12">
-                  <h2 className="h3 mb-3 text-black">Your Order</h2>
-                  <div className="p-3 p-lg-5 border bg-white">
-                    <table className="table site-block-order-table mb-5">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {items.map((item) => (
-                          <tr key={item.id}>
-                            <td>
-                              {item.name}{" "}
-                              <strong className="mx-2">x</strong>{" "}
-                              {item.quantity}
-                            </td>
-                            <td>${(item.price * item.quantity).toFixed(2)}</td>
-                          </tr>
-                        ))}
-                        {items.length === 0 && (
+                {/* Order table */}
+                <div className="row mb-5">
+                  <div className="col-md-12">
+                    <h2 className="h3 mb-3 text-black">Your Order</h2>
+                    <div className="p-3 p-lg-5 border bg-white">
+                      <table className="table site-block-order-table mb-4">
+                        <thead>
+                          <tr><th>Product</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                          {items.map((item) => (
+                            <tr key={item.id}>
+                              <td>{item.name} <strong className="mx-2">×</strong> {item.quantity}</td>
+                              <td>${(item.price * item.quantity).toFixed(2)}</td>
+                            </tr>
+                          ))}
                           <tr>
-                            <td colSpan="2" className="text-center text-muted">
-                              No items in cart
-                            </td>
+                            <td><strong>Subtotal</strong></td>
+                            <td>${cartTotal.toFixed(2)}</td>
                           </tr>
-                        )}
-                        <tr>
-                          <td className="text-black font-weight-bold">
-                            <strong>Cart Subtotal</strong>
-                          </td>
-                          <td className="text-black">${cartTotal.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                          <td className="text-black font-weight-bold">
-                            <strong>Order Total</strong>
-                          </td>
-                          <td className="text-black font-weight-bold">
-                            <strong>${cartTotal.toFixed(2)}</strong>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                          {discount && (
+                            <tr className="text-success">
+                              <td><strong>Discount ({discount.value}%)</strong></td>
+                              <td>–${discountAmount.toFixed(2)}</td>
+                            </tr>
+                          )}
+                          <tr>
+                            <td><strong>Order Total</strong></td>
+                            <td><strong>${orderTotal.toFixed(2)}</strong></td>
+                          </tr>
+                        </tbody>
+                      </table>
 
-                    <div className="border p-3 mb-3">
-                      <h3 className="h6 mb-0">
-                        <a
-                          className="d-block"
-                          data-bs-toggle="collapse"
-                          href="#collapsebank"
-                          role="button"
-                          aria-expanded="false"
-                          aria-controls="collapsebank"
-                        >
-                          Direct Bank Transfer
-                        </a>
-                      </h3>
-
-                      <div className="collapse" id="collapsebank">
-                        <div className="py-2">
-                          <p className="mb-0">
-                            Make your payment directly into our bank account.
-                            Please use your Order ID as the payment reference.
-                            Your order won’t be shipped until the funds have
-                            cleared in our account.
-                          </p>
-                        </div>
+                      {/* Payment method */}
+                      <div className="mb-4">
+                        <h5 className="mb-3">Payment Method</h5>
+                        {[
+                          { value: "bank_transfer", label: "Direct Bank Transfer" },
+                          { value: "cheque", label: "Cheque Payment" },
+                          { value: "cash_on_delivery", label: "Cash on Delivery" },
+                        ].map((pm) => (
+                          <div key={pm.value} className="form-check mb-2">
+                            <input className="form-check-input" type="radio" name="payment_method"
+                              id={pm.value} value={pm.value}
+                              checked={form.payment_method === pm.value}
+                              onChange={handleChange} />
+                            <label className="form-check-label" htmlFor={pm.value}>{pm.label}</label>
+                          </div>
+                        ))}
                       </div>
-                    </div>
 
-                    <div className="border p-3 mb-3">
-                      <h3 className="h6 mb-0">
-                        <a
-                          className="d-block"
-                          data-bs-toggle="collapse"
-                          href="#collapsecheque"
-                          role="button"
-                          aria-expanded="false"
-                          aria-controls="collapsecheque"
-                        >
-                          Cheque Payment
-                        </a>
-                      </h3>
-
-                      <div className="collapse" id="collapsecheque">
-                        <div className="py-2">
-                          <p className="mb-0">
-                            Make your payment directly into our bank account.
-                            Please use your Order ID as the payment reference.
-                            Your order won’t be shipped until the funds have
-                            cleared in our account.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border p-3 mb-5">
-                      <h3 className="h6 mb-0">
-                        <a
-                          className="d-block"
-                          data-bs-toggle="collapse"
-                          href="#collapsepaypal"
-                          role="button"
-                          aria-expanded="false"
-                          aria-controls="collapsepaypal"
-                        >
-                          Paypal
-                        </a>
-                      </h3>
-
-                      <div className="collapse" id="collapsepaypal">
-                        <div className="py-2">
-                          <p className="mb-0">
-                            Make your payment directly into our bank account.
-                            Please use your Order ID as the payment reference.
-                            Your order won’t be shipped until the funds have
-                            cleared in our account.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <button
-                        className="btn btn-black btn-lg py-3 btn-block w-100"
-                        onClick={handlePlaceOrder}
-                      >
-                        Place Order
+                      <button type="submit" className="btn btn-primary btn-lg w-100" disabled={placing}>
+                        {placing ? "Placing Order..." : "Place Order"}
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

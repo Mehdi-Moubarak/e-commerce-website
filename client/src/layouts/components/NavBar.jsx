@@ -89,12 +89,20 @@ function NavBar() {
                 <li className="d-flex align-items-center">
                   {user ? (
                     <>
-                      <span
+                      <NavLink
+                        to="/my-orders"
                         className="nav-link text-white-50 small me-1 d-none d-md-inline"
-                        style={{ cursor: "default" }}
+                        title="My Orders"
                       >
-                        Hi, {user.first_name || user.email}
-                      </span>
+                        Orders
+                      </NavLink>
+                      <NavLink
+                        to="/my-profile"
+                        className="nav-link text-white-50 small me-1 d-none d-md-inline"
+                        title="My Profile"
+                      >
+                        {user.first_name || user.email}
+                      </NavLink>
                       <button
                         className="nav-link btn btn-link"
                         style={{ color: "inherit", background: "none", border: "none", padding: "0.5rem" }}

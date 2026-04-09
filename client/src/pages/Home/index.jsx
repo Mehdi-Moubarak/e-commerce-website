@@ -5,10 +5,14 @@ import ExporeProducts from "./Sections/ExporeProducts";
 import Hero from "../../components/Hero";
 import WeHelp from "./Sections/WeHelp";
 import PopularProducts from "./Sections/PopularProducts";
-import usePageTitle from "../../hooks/usePageTitle";
+import useSEO from "../../hooks/useSEO";
 
 const Home = () => {
-  usePageTitle("Home");
+  useSEO({
+    title: "Home",
+    description: "ArtBS — Modern furniture and interior design pieces crafted to transform your living space. Shop now for free delivery.",
+    keywords: "furniture, interior design, modern furniture, home decor, sofas, chairs",
+  });
   return (
     <>
       <Hero

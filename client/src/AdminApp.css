@@ -12,6 +12,21 @@ main {
     margin-left: 200px;
 }
 
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    .link_text {
+        display: none;
+    }
+    .logo {
+        display: none;
+    }
+    main {
+        margin-left: 60px;
+    }
+}
+
 .sidebar {
     background: #000;
     color: #fff;

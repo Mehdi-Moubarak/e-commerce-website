@@ -35,8 +35,9 @@ function ExporeProducts() {
               Crafted with excellent material.
             </h2>
             <p className="mb-4">
-              Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet
-              velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
+              Every piece in our collection is selected for quality, durability,
+              and design. From statement sofas to accent chairs — find something
+              you'll love for years.
             </p>
             <p>
               <NavLink to="/shop" className="btn">

@@ -13,12 +13,19 @@ class Order extends Model
         'total_price',
         'status',
         'payment_status',
+        'payment_method',
+        'billing_address',
+        'notes',
         'customer_id',
-        'panier_id',
     ];
 
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderDetail::class);
     }
 }

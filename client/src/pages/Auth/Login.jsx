@@ -79,6 +79,7 @@ function Login({ image, title, caption }) {
               Keep me logged in
             </label>
           </div>
+          <Link to="/forgot-password" className="small">Forgot password?</Link>
         </div>
 
         <div className="d-grid mb-4">

@@ -32,8 +32,13 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Product from "./pages/Product";
+import Orders from "./pages/Orders";
+import OrderDetail from "./pages/Orders/OrderDetail";
+import Profile from "./pages/Profile";
 import { AuthProvider } from "./context/authContext";
 import { CartProvider } from "./context/cartContext";
 import ScrollToTop from "./components/ScrollToTop";
@@ -70,6 +75,11 @@ const App = () => {
               <Route path={ROUTES.cart} element={<Cart />} />
               <Route path={ROUTES.checkout} element={<Checkout />} />
               <Route path="product/:id" element={<Product />} />
+              <Route path={ROUTES.myOrders} element={<Orders />} />
+              <Route path="/my-orders/:id" element={<OrderDetail />} />
+              <Route path={ROUTES.myProfile} element={<Profile />} />
+              <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+              <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
             </Route>
             <Route element={<AuthLayout />}>
               <Route
