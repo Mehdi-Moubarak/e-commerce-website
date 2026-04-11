@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PayementController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,9 +17,13 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public auth routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Public auth routes (rate-limited: 10 attempts per minute)
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+});
 
 // Authenticated user routes
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -26,6 +31,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
+
+    // Customer orders
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+
+    // Comments (any logged-in user can post/view)
+    Route::get('comments', [CommentController::class, 'index']);
+    Route::get('comments/{id}', [CommentController::class, 'show']);
+    Route::post('comments', [CommentController::class, 'store']);
 });
 
 // Public read routes (shop browsing)
@@ -36,16 +52,22 @@ Route::get('category/{idCategory}', [CategoryController::class, 'show']);
 Route::get('discounts', [DiscountController::class, 'index']);
 Route::get('discounts/{id}', [DiscountController::class, 'show']);
 
-// Authenticated customer routes
-Route::middleware(['auth:sanctum'])->group(function () {
-    // Comments (any logged-in user can post/view)
-    Route::get('comments', [CommentController::class, 'index']);
-    Route::get('comments/{id}', [CommentController::class, 'show']);
-    Route::post('comments', [CommentController::class, 'store']);
+// Coupon validation (public)
+Route::get('coupons/{code}', function ($code) {
+    $discount = \App\Models\Discount::where('label', $code)->first();
+    if (!$discount) {
+        return response()->json(['message' => 'Invalid coupon code.'], 404);
+    }
+    return response()->json(['discount' => $discount], 200);
 });
 
 // Admin-only routes
 Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
+
+    // Admin orders
+    Route::get('admin/orders', [OrderController::class, 'adminIndex']);
+    Route::put('admin/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    Route::get('admin/stats', [OrderController::class, 'stats']);
 
     // Products (write)
     Route::post('products', [ProductController::class, 'store']);

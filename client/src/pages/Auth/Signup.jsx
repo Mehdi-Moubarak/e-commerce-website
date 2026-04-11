@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
-import { useState } from "react";
-import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const SignUp = ({ image, title, caption }) => {
+  usePageTitle("Sign Up");
   const { setImage, setTitle, setCaption } = useOutletContext();
   const { register, user } = useContext(AuthContext);
 
@@ -15,31 +15,63 @@ const SignUp = ({ image, title, caption }) => {
   }, [setImage, image, setTitle, title, setCaption, caption]);
 
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
+    confirm_password: "",
   });
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function changeData(event) {
     setFormData((data) => ({
       ...data,
       [event.target.name]: event.target.value,
-      [event.target.email]: event.target.value,
-      [event.target.password]: event.target.value,
     }));
   }
-  //send POST request to laravel
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError("");
 
-    const data = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      password_confirmation: formData.password,
-    };
+    if (!formData.first_name.trim()) {
+      setError("First name is required.");
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (formData.password !== formData.confirm_password) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-    register(data);
+    setSubmitting(true);
+    try {
+      await register({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.confirm_password,
+      });
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data?.errors) {
+        const messages = Object.values(data.errors).flat().join(" ");
+        setError(messages);
+      } else {
+        setError(data?.message || "Registration failed. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (user) {
@@ -48,18 +80,36 @@ const SignUp = ({ image, title, caption }) => {
 
   return (
     <>
+      {error && (
+        <div className="alert alert-danger py-2" role="alert">
+          {error}
+        </div>
+      )}
       <form action="#" className="pt-3" onSubmit={handleSubmit}>
         <div className="form-floating">
           <input
             type="text"
             className="form-control"
-            id="name"
-            placeholder="Full Name"
-            value={formData.name}
+            id="first_name"
+            placeholder="First Name"
+            value={formData.first_name}
             onChange={changeData}
-            name="name"
+            name="first_name"
           />
-          <label htmlFor="name">Full Name</label>
+          <label htmlFor="first_name">First Name</label>
+        </div>
+
+        <div className="form-floating">
+          <input
+            type="text"
+            className="form-control"
+            id="last_name"
+            placeholder="Last Name"
+            value={formData.last_name}
+            onChange={changeData}
+            name="last_name"
+          />
+          <label htmlFor="last_name">Last Name</label>
         </div>
 
         <div className="form-floating">
@@ -80,7 +130,7 @@ const SignUp = ({ image, title, caption }) => {
             type="password"
             className="form-control"
             id="password"
-            placeholder="Password"
+            placeholder="Password (min. 8 characters)"
             value={formData.password}
             onChange={changeData}
             name="password"
@@ -88,7 +138,29 @@ const SignUp = ({ image, title, caption }) => {
           <label htmlFor="password">Password</label>
         </div>
 
-        <div className="d-flex justify-content-between">
+        <div className="form-floating">
+          <input
+            type="password"
+            className={`form-control ${
+              formData.confirm_password && formData.confirm_password !== formData.password
+                ? "is-invalid"
+                : formData.confirm_password && formData.confirm_password === formData.password
+                ? "is-valid"
+                : ""
+            }`}
+            id="confirm_password"
+            placeholder="Confirm Password"
+            value={formData.confirm_password}
+            onChange={changeData}
+            name="confirm_password"
+          />
+          <label htmlFor="confirm_password">Confirm Password</label>
+          {formData.confirm_password && formData.confirm_password !== formData.password && (
+            <div className="invalid-feedback">Passwords do not match.</div>
+          )}
+        </div>
+
+        <div className="d-flex justify-content-between my-3">
           <div className="form-check">
             <input type="checkbox" className="form-check-input" id="remember" />
             <label htmlFor="remember" className="form-check-label">
@@ -99,8 +171,8 @@ const SignUp = ({ image, title, caption }) => {
         </div>
 
         <div className="d-grid mb-4">
-          <button type="submit" className="btn btn-primary">
-            Create an account
+          <button type="submit" className="btn btn-primary" disabled={submitting}>
+            {submitting ? "Creating account..." : "Create an account"}
           </button>
         </div>
 

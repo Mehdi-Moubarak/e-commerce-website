@@ -64,7 +64,7 @@ const TeamMember = ({ member }) => {
     <div className="col-12 col-md-6 col-lg-3 mb-5 mb-md-0">
       <img src={member.image} className="img-fluid mb-5" alt={member.alt} />
 
-      <h3 clas>
+      <h3>
         <NavLink to="#">
           <span className="">{member.name}</span>
         </NavLink>

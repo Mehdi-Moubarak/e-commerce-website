@@ -1,4 +1,5 @@
 export const ROUTES = {
+  // Admin
   dashboard: "dashboard",
   category: "/category",
   comment: "/comment",
@@ -13,13 +14,19 @@ export const ROUTES = {
   profile: "/profile",
   discount: "/discount",
   discountCreate: "/discountCreate",
+  // Public
   home: "/",
   login: "/login",
   signup: "/signup",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
   shop: "/shop",
   cart: "/cart",
   checkout: "/checkout",
   services: "/services",
   contact: "/contact",
   about: "/about",
+  // Customer account
+  myOrders: "/my-orders",
+  myProfile: "/my-profile",
 };

@@ -1,9 +1,37 @@
-import React from 'react'
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 function ContactForm() {
+  const [form, setForm] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    message: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.fname || !form.email || !form.message) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    setSubmitting(true);
+    // Simulate sending — no backend endpoint exists yet
+    setTimeout(() => {
+      toast.success("Message sent! We'll get back to you shortly.");
+      setForm({ fname: "", lname: "", email: "", message: "" });
+      setSubmitting(false);
+    }, 800);
+  };
+
   return (
     <div>
-        <div className="untree_co-section">
+      <div className="untree_co-section">
         <div className="container">
           <div className="block">
             <div className="row justify-content-center">
@@ -85,17 +113,19 @@ function ContactForm() {
                   </div>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-6">
                       <div className="form-group">
                         <label className="text-black" htmlFor="fname">
-                          First name
+                          First name <span className="text-danger">*</span>
                         </label>
                         <input
                           type="text"
                           className="form-control"
                           id="fname"
+                          value={form.fname}
+                          onChange={handleChange}
                         />
                       </div>
                     </div>
@@ -108,35 +138,45 @@ function ContactForm() {
                           type="text"
                           className="form-control"
                           id="lname"
+                          value={form.lname}
+                          onChange={handleChange}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="form-group">
                     <label className="text-black" htmlFor="email">
-                      Email address
+                      Email address <span className="text-danger">*</span>
                     </label>
-                    <input type="email" className="form-control" id="email" />
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      value={form.email}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="form-group mb-5">
                     <label className="text-black" htmlFor="message">
-                      Message
+                      Message <span className="text-danger">*</span>
                     </label>
                     <textarea
-                      name=""
                       className="form-control"
                       id="message"
                       cols="30"
                       rows="5"
+                      value={form.message}
+                      onChange={handleChange}
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
                     className="btn btn-primary-hover-outline"
+                    disabled={submitting}
                   >
-                    Send Message
+                    {submitting ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               </div>
@@ -145,7 +185,7 @@ function ContactForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ContactForm
+export default ContactForm;

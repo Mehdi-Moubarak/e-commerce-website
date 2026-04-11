@@ -1,6 +1,7 @@
 import React from "react";
-//import "./App.css";
-import "./AdminApp.css";
+import "./App.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AppLayout from "./layouts/AppLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -15,10 +16,9 @@ import ProductView from "./pages/Dashboard/ProductView.js";
 import ProductUpdate from "./pages/Dashboard/ProductUpdate.js";
 import ProductCreate from "./pages/Dashboard/ProductCreate.js";
 import Order from "./pages/Dashboard/Order.js";
-import Profile from "./pages/Dashboard/Profile.js";
 import Discount from "./pages/Dashboard/Discount.js";
 import DiscountCreate from "./pages/Dashboard/DiscountCreate.js";
-import OrderDetail from "./pages/Dashboard/OrderDetail.js";
+import AdminOrderDetail from "./pages/Dashboard/OrderDetail.js";
 import OrderView from "./pages/Dashboard/OrderView.js";
 import CommentView from "./pages/Dashboard/CommentView.js";
 
@@ -31,68 +31,92 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/Signup";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import NotFound from "./pages/NotFound";
+import Product from "./pages/Product";
+import Orders from "./pages/Orders";
+import OrderDetail from "./pages/Orders/OrderDetail";
+import AdminProfile from "./pages/Dashboard/Profile.js";
+import Profile from "./pages/Profile";
 import { AuthProvider } from "./context/authContext";
+import { CartProvider } from "./context/cartContext";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<AdminLayout />}>
-            <Route path={ROUTES.dashboard} element={<Dashboard />} />
-            
-            <Route path={ROUTES.category} element={<Category />} />
-
-            <Route path={ROUTES.comment} element={<Comment />} />
-            <Route path={ROUTES.commentView} element={<CommentView />} />
-
-            <Route path={ROUTES.order} element={<Order />} />
-            <Route path={ROUTES.orderDetail} element={<OrderDetail />} />
-            <Route path={ROUTES.orderView} element={<OrderView />} />
-
-            <Route path={ROUTES.productList} element={<ProductList />} />
-            <Route path={ROUTES.productView} element={<ProductView />} />
-            <Route path={ROUTES.productUpdate} element={<ProductUpdate />} />
-            <Route path={ROUTES.productCreate} element={<ProductCreate />} />
-
-            <Route path={ROUTES.profile} element={<Profile />} />
-
-            <Route path={ROUTES.discount} element={<Discount />} />
-            <Route path={ROUTES.discountCreate} element={<DiscountCreate />} />
-          </Route>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Home />} />
-            <Route path={ROUTES.contact} element={<Contact />} />
-            <Route path={ROUTES.about} element={<About />} />
-            <Route path={ROUTES.shop} element={<Shop />} />
-            <Route path={ROUTES.services} element={<Services />} />
-            <Route path={ROUTES.cart} element={<Cart />} />
-            <Route path={ROUTES.checkout} element={<Checkout />} />
-          </Route>
-          <Route element={<AuthLayout />}>
-            <Route
-              path={ROUTES.login}
-              element={
-                <Login
-                  image="images/img-bg-1.jpg"
-                  title="Login"
-                  caption="Please enter your login details to sign in."
-                />
-              }
-            />
-            <Route
-              path={ROUTES.signup}
-              element={
-                <SignUp
-                  image="images/img-bg-2.jpg"
-                  title="Sign up"
-                  caption="Create your account in seconds."
-                />
-              }
-            />
-          </Route>
-          <Route path="*" element={<h1>Not Found</h1>} />
-        </Routes>
+        <CartProvider>
+          <Routes>
+            <Route path="/" element={<AdminLayout />}>
+              <Route path={ROUTES.dashboard} element={<Dashboard />} />
+              <Route path={ROUTES.category} element={<Category />} />
+              <Route path={ROUTES.comment} element={<Comment />} />
+              <Route path={ROUTES.commentView} element={<CommentView />} />
+              <Route path={ROUTES.order} element={<Order />} />
+              <Route path={ROUTES.orderDetail} element={<AdminOrderDetail />} />
+              <Route path={ROUTES.orderView} element={<OrderView />} />
+              <Route path={ROUTES.productList} element={<ProductList />} />
+              <Route path={ROUTES.productView} element={<ProductView />} />
+              <Route path={ROUTES.productUpdate} element={<ProductUpdate />} />
+              <Route path={ROUTES.productCreate} element={<ProductCreate />} />
+              <Route path={ROUTES.profile} element={<AdminProfile />} />
+              <Route path={ROUTES.discount} element={<Discount />} />
+              <Route path={ROUTES.discountCreate} element={<DiscountCreate />} />
+            </Route>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Home />} />
+              <Route path={ROUTES.contact} element={<Contact />} />
+              <Route path={ROUTES.about} element={<About />} />
+              <Route path={ROUTES.shop} element={<Shop />} />
+              <Route path={ROUTES.services} element={<Services />} />
+              <Route path={ROUTES.cart} element={<Cart />} />
+              <Route path={ROUTES.checkout} element={<Checkout />} />
+              <Route path="product/:id" element={<Product />} />
+              <Route path={ROUTES.myOrders} element={<Orders />} />
+              <Route path="/my-orders/:id" element={<OrderDetail />} />
+              <Route path={ROUTES.myProfile} element={<Profile />} />
+              <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+              <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
+            </Route>
+            <Route element={<AuthLayout />}>
+              <Route
+                path={ROUTES.login}
+                element={
+                  <Login
+                    image="images/img-bg-1.jpg"
+                    title="Login"
+                    caption="Please enter your login details to sign in."
+                  />
+                }
+              />
+              <Route
+                path={ROUTES.signup}
+                element={
+                  <SignUp
+                    image="images/img-bg-2.jpg"
+                    title="Sign up"
+                    caption="Create your account in seconds."
+                  />
+                }
+              />
+            </Route>
+            <Route path="/" element={<AppLayout />}>
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={2500}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+          />
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );

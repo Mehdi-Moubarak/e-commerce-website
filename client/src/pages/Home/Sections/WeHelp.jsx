@@ -21,23 +21,22 @@ function WeHelp() {
           </div>
           <div className="col-lg-5 ps-lg-5">
             <h2 className="section-title mb-4">
-              We Help You Make Modern Interior Design
+              We Help You Create Your Perfect Living Space
             </h2>
             <p>
-              Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio
-              quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam
-              vulputate velit imperdiet dolor tempor tristique. Pellentesque
-              habitant morbi tristique senectus et netus et malesuada
+              From concept to delivery, we guide you through every step of
+              furnishing your home. Our curated collections blend timeless
+              craftsmanship with contemporary design so every room tells your story.
             </p>
 
             <ul className="list-unstyled custom-list my-4">
-              <li key="1">Donec vitae odio quis nisl dapibus malesuada</li>
-              <li key="2">Donec vitae odio quis nisl dapibus malesuada</li>
-              <li key="3">Donec vitae odio quis nisl dapibus malesuada</li>
-              <li key="4">Donec vitae odio quis nisl dapibus malesuada</li>
+              <li>Hand-picked pieces from trusted artisan makers</li>
+              <li>Free design consultation with every purchase</li>
+              <li>White-glove delivery and professional assembly</li>
+              <li>30-day hassle-free returns on all items</li>
             </ul>
             <p>
-              <NavLink to="#" className="btn">
+              <NavLink to="/shop" className="btn">
                 Explore
               </NavLink>
             </p>

@@ -1,42 +1,44 @@
 import { createContext, useEffect, useState } from "react";
 import { axios } from "../api";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios.get("/user").then((result) => {
-        setUser(result.data);
-      });
+      axios
+        .get("/user")
+        .then((result) => {
+          setUser(result.data);
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  const login = (userData) => {
-    axios
-      .post("/login", userData)
-      .then((result) => {
-        localStorage.setItem("token", result.data.token);
-        setUser(result.data.user);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const login = async (userData) => {
+    const result = await axios.post("/login", userData);
+    localStorage.setItem("token", result.data.token);
+    setUser(result.data.user);
+    toast.success(`Welcome back, ${result.data.user.first_name}!`);
   };
 
   const register = async (userData) => {
-    await axios
-      .post("/register", userData)
-      .then((result) => {
-        localStorage.setItem("token", result.data.token);
-        setUser(result.data.user);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const result = await axios.post("/register", userData);
+    localStorage.setItem("token", result.data.token);
+    setUser(result.data.user);
+    toast.success(`Account created! Welcome, ${result.data.user.first_name}!`);
   };
 
   const logout = () => {
@@ -45,21 +47,17 @@ export const AuthProvider = ({ children }) => {
       .then(() => {
         localStorage.removeItem("token");
         setUser(null);
+        toast.info("You have been logged out.");
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        localStorage.removeItem("token");
+        setUser(null);
+        toast.info("You have been logged out.");
       });
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        register,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
