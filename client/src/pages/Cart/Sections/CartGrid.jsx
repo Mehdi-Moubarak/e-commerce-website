@@ -54,17 +54,17 @@ function CartGrid() {
           <div className="col-md-6">
             <div className="row mb-5">
               <div className="col-md-6">
-                <NavLink to="/shop" className="btn btn-outline-black btn-sm btn-block">
+                <NavLink to="/shop" className="btn btn-outline-black btn-sm w-100">
                   Continue Shopping
                 </NavLink>
               </div>
             </div>
           </div>
-          <div className="col-md-6 pl-5">
+          <div className="col-md-6 ps-5">
             <div className="row justify-content-end">
               <div className="col-md-7">
                 <div className="row">
-                  <div className="col-md-12 text-right border-bottom mb-5">
+                  <div className="col-md-12 text-end border-bottom mb-5">
                     <h3 className="text-black h4 text-uppercase">Cart Totals</h3>
                   </div>
                 </div>
@@ -72,7 +72,7 @@ function CartGrid() {
                   <div className="col-md-6">
                     <span className="text-black">Subtotal</span>
                   </div>
-                  <div className="col-md-6 text-right">
+                  <div className="col-md-6 text-end">
                     <strong className="text-black">${cartTotal.toFixed(2)}</strong>
                   </div>
                 </div>
@@ -80,14 +80,14 @@ function CartGrid() {
                   <div className="col-md-6">
                     <span className="text-black">Total</span>
                   </div>
-                  <div className="col-md-6 text-right">
+                  <div className="col-md-6 text-end">
                     <strong className="text-black">${cartTotal.toFixed(2)}</strong>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-12">
                     <NavLink
-                      className="btn btn-black btn-lg py-3 btn-block"
+                      className="btn btn-black btn-lg py-3 w-100"
                       to="/checkout"
                     >
                       Proceed To Checkout

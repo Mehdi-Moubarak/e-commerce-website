@@ -10,7 +10,8 @@ function PopularProductCard({ product }) {
         </div>
         <div className="pt-3">
           <h3>{product.name}</h3>
-          <p>{product.short_description} </p>
+          <p className="product-price fw-bold">${parseFloat(product.price).toFixed(2)}</p>
+          <p className="text-muted small">{product.short_description}</p>
           <p>
             <NavLink to={`/product/${product.id}`}>Read More</NavLink>
           </p>

@@ -56,7 +56,9 @@ function Login({ image, title, caption }) {
             className="form-control"
             id="email"
             placeholder="info@example.com"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <label htmlFor="email">Email Address</label>
         </div>
@@ -67,7 +69,9 @@ function Login({ image, title, caption }) {
             className="form-control"
             id="password"
             placeholder="Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <label htmlFor="password">Password</label>
         </div>

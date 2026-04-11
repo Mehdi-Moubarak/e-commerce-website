@@ -51,7 +51,7 @@ const CategoryFilter = () => {
             className={`btn btn-sm ${String(cat.id) === activeCategory ? "btn-dark" : "btn-outline-secondary"}`}
             onClick={() => handleSelect(cat.id)}
           >
-            {cat.nameCategory}
+            {cat.nameCategory || cat.name}
           </button>
         ))}
       </div>
