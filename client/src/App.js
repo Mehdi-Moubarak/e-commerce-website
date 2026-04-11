@@ -16,10 +16,9 @@ import ProductView from "./pages/Dashboard/ProductView.js";
 import ProductUpdate from "./pages/Dashboard/ProductUpdate.js";
 import ProductCreate from "./pages/Dashboard/ProductCreate.js";
 import Order from "./pages/Dashboard/Order.js";
-import Profile from "./pages/Dashboard/Profile.js";
 import Discount from "./pages/Dashboard/Discount.js";
 import DiscountCreate from "./pages/Dashboard/DiscountCreate.js";
-import OrderDetail from "./pages/Dashboard/OrderDetail.js";
+import AdminOrderDetail from "./pages/Dashboard/OrderDetail.js";
 import OrderView from "./pages/Dashboard/OrderView.js";
 import CommentView from "./pages/Dashboard/CommentView.js";
 
@@ -38,6 +37,7 @@ import NotFound from "./pages/NotFound";
 import Product from "./pages/Product";
 import Orders from "./pages/Orders";
 import OrderDetail from "./pages/Orders/OrderDetail";
+import AdminProfile from "./pages/Dashboard/Profile.js";
 import Profile from "./pages/Profile";
 import { AuthProvider } from "./context/authContext";
 import { CartProvider } from "./context/cartContext";
@@ -56,13 +56,13 @@ const App = () => {
               <Route path={ROUTES.comment} element={<Comment />} />
               <Route path={ROUTES.commentView} element={<CommentView />} />
               <Route path={ROUTES.order} element={<Order />} />
-              <Route path={ROUTES.orderDetail} element={<OrderDetail />} />
+              <Route path={ROUTES.orderDetail} element={<AdminOrderDetail />} />
               <Route path={ROUTES.orderView} element={<OrderView />} />
               <Route path={ROUTES.productList} element={<ProductList />} />
               <Route path={ROUTES.productView} element={<ProductView />} />
               <Route path={ROUTES.productUpdate} element={<ProductUpdate />} />
               <Route path={ROUTES.productCreate} element={<ProductCreate />} />
-              <Route path={ROUTES.profile} element={<Profile />} />
+              <Route path={ROUTES.profile} element={<AdminProfile />} />
               <Route path={ROUTES.discount} element={<Discount />} />
               <Route path={ROUTES.discountCreate} element={<DiscountCreate />} />
             </Route>
